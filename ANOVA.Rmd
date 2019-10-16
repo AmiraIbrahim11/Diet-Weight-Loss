@@ -1,0 +1,56 @@
+---
+title: "ANOVA"
+author: "Amira Ibrahim"
+date: "October 16, 2019"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+#Attach Data 
+```{r DietWeightLoss, echo=TRUE}
+Diet_Data <- read.table(file.choose() , header = T , sep = "\t")
+attach(Diet_Data)
+```
+
+##check normality 
+```{r , echo=TRUE}
+library(moments)
+skewness(WeightLoss)
+```
+accepted level from -1 to +1
+```{r , echo=TRUE}
+kurtosis(WeightLoss)
+```
+accepted level from -2 to +2 may to +3
+```{r , echo=TRUE}
+boxplot(WeightLoss~Diet , main = "Relation between type of diet & weight loss")
+```
+visually it is normally distributed
+```{r , echo=TRUE}
+shapiro.test(WeightLoss)
+```
+p-value > 0.05 , Fail to reject H0 , Data is normally distributed
+
+##Analysis of relation between type of diet and weight lose : 
+#comparing one categorical variable(Diet) contain more than 2 levels and one numerical variable :
+#using one way ANOVA 
+#H0 : Mean weight lose is the same for all types of diet
+```{r , echo=TRUE}
+ANOVA1 <- aov(formula = WeightLoss~Diet , data=Diet_Data)
+summary(ANOVA1)
+```
+p-value < 0.05 , reject H0
+
+#I need to Know which type of Diet is significant :
+```{r , echo=TRUE}
+TukeyHSD(ANOVA1)
+plot(TukeyHSD(ANOVA1), las=1)
+```
+Diffrence in mean between C-A , C-B is significant 
+Diffrence in mean C-B is more significant than C-A
+
+```{r, include=FALSE}
+library(tinytex)
+options(tinytex.verbose = TRUE)
+```
